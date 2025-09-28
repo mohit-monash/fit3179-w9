@@ -1,0 +1,78 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+
+  "description": "Unemployment rate (seasonally adjusted) by Australian state/territory — ABS",
+
+  "width": 720,
+  "height": 520,
+
+  "projection": {
+    "type": "mercator",
+    "center": [134.472639, -27.439861],
+    "scale": 500
+  },
+
+  "title": {
+    "text": "Unemployment rate by State/Territory (Seasonally adjusted)",
+    "subtitle": [
+      "Geometry: ABS ASGS 2021 STE"
+    ],
+    "fontSize": 16
+  },
+
+  "config": {
+    "view": { "stroke": null },
+    "legend": { "titleFontSize": 12, "labelFontSize": 11 }
+  },
+
+  "layer": [
+    {
+      "data": { "sphere": true },
+      "mark": { "type": "geoshape", "fill": "#eef2f7", "stroke": "#cfd8dc" }
+    },
+    {
+      "data": { "graticule": { "step": [30, 30] } },
+      "mark": { "type": "geoshape", "filled": false, "stroke": "#d0d0d0" }
+    },
+    {
+      "data": {
+        "url": "https://geo.abs.gov.au/arcgis/rest/services/ASGS2021/STE/OGCFeatureServer/collections/0/items?f=json&limit=200",
+        "format": { "type": "json", "property": "features" }
+      },
+      "transform": [
+        {
+          "lookup": "properties.state_name_2021",
+          "from": {
+            "data": {
+              "values": [
+                { "state_name": "New South Wales", "unemp_sa": 4.2 },
+                { "state_name": "Victoria", "unemp_sa": 4.4 },
+                { "state_name": "Queensland", "unemp_sa": 4.4 },
+                { "state_name": "South Australia", "unemp_sa": 4.9 },
+                { "state_name": "Western Australia", "unemp_sa": 3.8 },
+                { "state_name": "Tasmania", "unemp_sa": 3.2 },
+                { "state_name": "Northern Territory", "unemp_sa": 4.5 },
+                { "state_name": "Australian Capital Territory", "unemp_sa": 4.7 }
+              ]
+            },
+            "key": "state_name",
+            "fields": ["unemp_sa"]
+          }
+        }
+      ],
+      "mark": { "type": "geoshape", "stroke": "white", "strokeWidth": 1 },
+      "encoding": {
+        "color": {
+          "field": "unemp_sa",
+          "type": "quantitative",
+          "title": "Unemployment rate (%)",
+          "scale": { "scheme": "blues", "type": "quantize", "unknown": "#eeeeee" }
+        },
+        "tooltip": [
+          { "field": "properties.state_name_2021", "title": "State/Territory" },
+          { "field": "unemp_sa", "title": "Unemployment rate", "type": "quantitative", "format": ".1f" }
+        ]
+      }
+    }
+  ]
+}
